@@ -1,6 +1,6 @@
 dataclasses
 numpy
 pandas
-sklearn
+scikit-learn
 gdown
 catboost
