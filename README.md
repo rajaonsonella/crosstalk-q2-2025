@@ -14,7 +14,7 @@
 Click the links below to open the notebooks:
 
 * **Exploratory Data Analysis Notebook:**  
-  [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cottascience/crosstalk-q1-2025/blob/main/EDA.ipynb)
+  [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cottascience/crosstalk-q1-2025/blob/main/CROSSTALK_EDA.ipynb)
 
 * **Training Notebook:**  
-  [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cottascience/crosstalk-q1-2025/blob/main/notebook.ipynb)
+  [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cottascience/crosstalk-q1-2025/blob/main/CROSSTALK_TRAIN.ipynb)
