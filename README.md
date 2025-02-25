@@ -1,4 +1,10 @@
-# Getting Started
+# CrossTALK Bootcamp Q1 2025
+
+Cross-Training in AI and Laboratory Knowledge for Drug Discovery
+
+https://datasciences.utoronto.ca/crosstalk-bootcamp/
+
+## Getting Started in the notebooks
 
 <div style="background-color: #f0f4f8; border-left: 5px solid #2962ff; padding: 15px; margin: 20px 0;">
   <h3 style="color: #2962ff; margin-top: 0;">⚠️ GPU Runtime Required</h3>
@@ -13,8 +19,26 @@
 
 Click the links below to open the notebooks:
 
-* **Exploratory Data Analysis Notebook:**  
+- **Exploratory Data Analysis Notebook:**  
   [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cottascience/crosstalk-q1-2025/blob/main/CROSSTALK_EDA.ipynb)
 
-* **Training Notebook:**  
+- **Training Notebook:**  
   [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cottascience/crosstalk-q1-2025/blob/main/CROSSTALK_TRAIN.ipynb)
+
+## Navigating the repo (file structure)
+
+```
+├── LICENSE            <- Terms to use this software.
+├── README.md          <- This file!
+├── data
+├── notebooks          <- Directory of Jupyter/Colab notebooks.
+├── requirements.txt   <- The requirements file for reproducing the enviroment.
+│
+└── crosstalk   <- Source code for this bootcamp
+    │
+    ├── __init__.py             <- Makes crosstalk a Python module
+    │    │
+    ├── dataset.py              <- Scripts to download or generate data
+    │    │
+    └── utils.py           <- Code to create visualizations
+```
