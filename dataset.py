@@ -13,16 +13,22 @@ class Dataset:
     y: np.ndarray = None
 
     def __post_init__(self):
-
         if not isinstance(self.X_col, str) or self.X_col not in FINGERPRINT_TYPES:
             raise ValueError(f"X_col must be one of {FINGERPRINT_TYPES}")
 
+        # Read only the required columns
         df = pd.read_parquet(self.filename, columns=[self.X_col, self.y_col])
         self.y = df[self.y_col].values
-        self.X = np.vstack([np.fromstring(x, sep=',') for x in df[self.X_col].values])
-        if np.all(np.isin(self.y, [0, 1])):
+        
+        # More efficient string-to-array conversion
+        self.X = np.array([np.fromstring(x, sep=',') for x in df[self.X_col].values])
+        
+        # Check if y contains non-binary values (your condition was inverted)
+        if not np.all(np.isin(self.y, [0, 1])):
             raise ValueError("y must contain only binary labels (0 or 1)")
 
-        invalid_rows = np.where(pd.isna(self.X))[0]
+        # Check for NaN values
+        invalid_mask = np.isnan(self.X).any(axis=1)
+        invalid_rows = np.where(invalid_mask)[0]
         if len(invalid_rows) > 0:
             print(f"Warning: Found {len(invalid_rows)} invalid rows at indices: {invalid_rows.tolist()}")
