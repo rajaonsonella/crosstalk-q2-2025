@@ -48,12 +48,12 @@ class Dataset:
             raise ValueError("y must contain only binary labels (0 or 1)")
 
         first_row = np.fromstring(df[self.x_col].iloc[0], sep=",", dtype=np.float32)
-        self.x = np.empty((len(df), len(first_row)), dtype=np.float32)
+        self.X = np.empty((len(df), len(first_row)), dtype=np.float32)
         for i, x in enumerate(df[self.x_col].values):
-            self.x[i, :] = np.fromstring(x, sep=",", dtype=np.float32)
+            self.X[i, :] = np.fromstring(x, sep=",", dtype=np.float32)
 
         # Check for NaN values
-        invalid_mask = np.isnan(self.x).any(axis=1)
+        invalid_mask = np.isnan(self.X).any(axis=1)
         invalid_rows = np.where(invalid_mask)[0]
         if len(invalid_rows) > 0:
             print(f"Warning: Found {len(invalid_rows)} invalid rows in dataset")
