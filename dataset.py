@@ -7,19 +7,19 @@ import numpy as np
 import pandas as pd
 
 
-class FingerprintEum(enum.StrEnum):
-    ATOMPAIR = enum.auto()
-    MACCS = enum.auto()
-    ECFP6 = enum.auto()
-    ECFP4 = enum.auto()
-    FCFP4 = enum.auto()
-    FCFP6 = enum.auto()
-    TOPTOR = enum.auto()
-    RDK = enum.auto()
-    AVALON = enum.auto()
+# class FingerprintEum(enum.StrEnum):
+#     ATOMPAIR = enum.auto()
+#     MACCS = enum.auto()
+#     ECFP6 = enum.auto()
+#     ECFP4 = enum.auto()
+#     FCFP4 = enum.auto()
+#     FCFP6 = enum.auto()
+#     TOPTOR = enum.auto()
+#     RDK = enum.auto()
+#     AVALON = enum.auto()
 
 
-# FINGERPRINT_TYPES = ['ATOMPAIR', 'MACCS', 'ECFP6', 'ECFP4', 'FCFP4', 'FCFP6', 'TOPTOR', 'RDK', 'AVALON']
+FINGERPRINT_TYPES = ['ATOMPAIR', 'MACCS', 'ECFP6', 'ECFP4', 'FCFP4', 'FCFP6', 'TOPTOR', 'RDK', 'AVALON']
 
 
 @dataclass
@@ -33,7 +33,9 @@ class Dataset:
     y: np.ndarray = None
 
     def __post_init__(self):
-        self.x_col = FingerprintEum(self.x_col)
+        
+        if self.x_col not in FINGERPRINT_TYPES:
+            raise ValueError("Invalid fingerprint type")
 
         # Read data from parquet file
         df = pd.read_parquet(self.filename, columns=[self.x_col, self.y_col])
