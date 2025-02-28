@@ -1,0 +1,109 @@
+Note: detected 192 virtual cores but NumExpr set to maximum of 64, check "NUMEXPR_MAX_THREADS" environment variable.
+Note: NumExpr detected 192 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+NumExpr defaulting to 8 threads.
+[W 2025-02-28 14:27:53.297 LabApp] Config option `kernel_spec_manager_class` not recognized by `LabApp`.
+[W 2025-02-28 14:27:53.300 LabApp] Config option `kernel_spec_manager_class` not recognized by `LabApp`.
+[W 2025-02-28 14:27:53.305 LabApp] Config option `kernel_spec_manager_class` not recognized by `LabApp`.
+[I 2025-02-28 14:27:53.306 ServerApp] jupyterlab | extension was successfully linked.
+[W 2025-02-28 14:27:53.308 NotebookApp] Config option `kernel_spec_manager_class` not recognized by `NotebookApp`.
+[W 2025-02-28 14:27:53.343 NotebookApp] Config option `kernel_spec_manager_class` not recognized by `NotebookApp`.
+[W 2025-02-28 14:27:53.346 NotebookApp] Config option `kernel_spec_manager_class` not recognized by `NotebookApp`.
+[I 2025-02-28 14:27:56.883 ServerApp] nbclassic | extension was successfully linked.
+[I 2025-02-28 14:27:56.883 ServerApp] panel.io.jupyter_server_extension | extension was successfully linked.
+[I 2025-02-28 14:27:58.033 ServerApp] [nb_conda_kernels] enabled, 2 kernels found
+[I 2025-02-28 14:27:58.358 ServerApp] nbclassic | extension was successfully loaded.
+[I 2025-02-28 14:27:58.359 LabApp] JupyterLab extension loaded from /pkgs/anaconda3/lib/python3.7/site-packages/jupyterlab
+[I 2025-02-28 14:27:58.359 LabApp] JupyterLab application directory is /w/pkgs/anaconda3/share/jupyter/lab
+[I 2025-02-28 14:27:58.362 ServerApp] jupyterlab | extension was successfully loaded.
+[I 2025-02-28 14:27:58.363 ServerApp] panel.io.jupyter_server_extension | extension was successfully loaded.
+[I 2025-02-28 14:27:58.364 ServerApp] Serving notebooks from local directory: /mfs1/u/lcotta/crosstalk-q1-2025
+[I 2025-02-28 14:27:58.364 ServerApp] Jupyter Server 1.18.1 is running at:
+[I 2025-02-28 14:27:58.364 ServerApp] http://boorchu:8888/lab?token=d5adb985bfcb5b4851c19b018a904d3a7cf46d247b055098
+[I 2025-02-28 14:27:58.364 ServerApp]  or http://127.0.0.1:8888/lab?token=d5adb985bfcb5b4851c19b018a904d3a7cf46d247b055098
+[I 2025-02-28 14:27:58.364 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 2025-02-28 14:27:58.409 ServerApp] 
+    
+    To access the server, open this file in a browser:
+        file:///h/290/lcotta/.local/share/jupyter/runtime/jpserver-3792098-open.html
+    Or copy and paste one of these URLs:
+        http://boorchu:8888/lab?token=d5adb985bfcb5b4851c19b018a904d3a7cf46d247b055098
+     or http://127.0.0.1:8888/lab?token=d5adb985bfcb5b4851c19b018a904d3a7cf46d247b055098
+[I 2025-02-28 14:28:12.165 ServerApp] 302 GET / (10.63.12.14) 0.53ms
+[I 2025-02-28 14:28:12.171 LabApp] 302 GET /lab? (10.63.12.14) 0.48ms
+[I 2025-02-28 14:28:14.905 ServerApp] 302 GET / (10.63.12.14) 0.42ms
+[I 2025-02-28 14:28:14.908 LabApp] 302 GET /lab? (10.63.12.14) 0.35ms
+[I 2025-02-28 14:28:23.169 ServerApp] 302 GET / (10.63.12.14) 0.44ms
+[I 2025-02-28 14:28:23.172 LabApp] 302 GET /lab? (10.63.12.14) 0.40ms
+[I 2025-02-28 14:28:23.516 ServerApp] Kernel started: 8682bf32-d92a-404f-8eb5-8203e120907e
+[I 2025-02-28 14:28:25.452 ServerApp] 302 GET / (10.63.12.14) 0.29ms
+[I 2025-02-28 14:28:25.456 ServerApp] 302 GET / (10.63.12.14) 0.24ms
+[I 2025-02-28 14:28:25.457 ServerApp] 302 GET / (10.63.12.14) 0.21ms
+[I 2025-02-28 14:28:25.489 LabApp] 302 GET /lab? (10.63.12.14) 0.33ms
+[I 2025-02-28 14:28:25.490 LabApp] 302 GET /lab? (10.63.12.14) 0.35ms
+[I 2025-02-28 14:28:25.490 LabApp] 302 GET /lab? (10.63.12.14) 0.32ms
+[W 2025-02-28 14:28:25.539 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.539 ServerApp] 403 GET /api/kernelspecs?1740770905537 (10.63.12.14) 0.47ms referer=None
+[W 2025-02-28 14:28:25.540 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.541 ServerApp] 403 GET /api/kernelspecs?1740770905539 (10.63.12.14) 0.37ms referer=None
+[W 2025-02-28 14:28:25.542 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.542 ServerApp] 403 GET /api/kernelspecs?1740770905541 (10.63.12.14) 0.36ms referer=None
+[W 2025-02-28 14:28:25.553 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.553 ServerApp] 403 GET /api/kernels?1740770905538 (10.63.12.14) 0.45ms referer=None
+[W 2025-02-28 14:28:25.554 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.555 ServerApp] 403 GET /api/kernels?1740770905540 (10.63.12.14) 1.15ms referer=None
+[W 2025-02-28 14:28:25.555 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.555 ServerApp] 403 GET /api/kernels?1740770905541 (10.63.12.14) 1.30ms referer=None
+[W 2025-02-28 14:28:25.555 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.555 ServerApp] 403 GET /api/kernels?1740770905543 (10.63.12.14) 1.44ms referer=None
+[W 2025-02-28 14:28:25.555 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.556 ServerApp] 403 GET /api/sessions?1740770905544 (10.63.12.14) 1.58ms referer=None
+[W 2025-02-28 14:28:25.556 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.556 ServerApp] 403 GET /api/kernels?1740770905546 (10.63.12.14) 1.78ms referer=None
+[W 2025-02-28 14:28:25.557 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.557 ServerApp] 403 GET /api/sessions?1740770905547 (10.63.12.14) 0.74ms referer=None
+[W 2025-02-28 14:28:25.557 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.557 ServerApp] 403 GET /api/kernelspecs?1740770905551 (10.63.12.14) 0.77ms referer=None
+[W 2025-02-28 14:28:25.558 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.558 ServerApp] 403 GET /api/kernels?1740770905547 (10.63.12.14) 0.95ms referer=None
+[W 2025-02-28 14:28:25.558 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.558 ServerApp] 403 GET /api/sessions?1740770905547 (10.63.12.14) 1.08ms referer=None
+[W 2025-02-28 14:28:25.559 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.559 ServerApp] 403 GET /api/kernelspecs?1740770905551 (10.63.12.14) 1.21ms referer=None
+[W 2025-02-28 14:28:25.559 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.559 ServerApp] 403 GET /api/kernelspecs?1740770905551 (10.63.12.14) 1.35ms referer=None
+[I 2025-02-28 14:28:25.565 ServerApp] 302 GET / (10.63.12.14) 0.20ms
+[I 2025-02-28 14:28:25.565 ServerApp] 302 GET / (10.63.12.14) 0.23ms
+[I 2025-02-28 14:28:25.565 ServerApp] 302 GET / (10.63.12.14) 0.23ms
+[I 2025-02-28 14:28:25.572 LabApp] 302 GET /lab? (10.63.12.14) 0.31ms
+[I 2025-02-28 14:28:25.574 LabApp] 302 GET /lab? (10.63.12.14) 0.23ms
+[I 2025-02-28 14:28:25.575 LabApp] 302 GET /lab? (10.63.12.14) 0.47ms
+[W 2025-02-28 14:28:25.579 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.579 ServerApp] 403 GET /api/kernelspecs?1740770905577 (10.63.12.14) 0.37ms referer=None
+[W 2025-02-28 14:28:25.582 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.582 ServerApp] 403 GET /api/kernels?1740770905578 (10.63.12.14) 0.39ms referer=None
+[W 2025-02-28 14:28:25.583 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.584 ServerApp] 403 GET /api/kernelspecs?1740770905582 (10.63.12.14) 0.36ms referer=None
+[W 2025-02-28 14:28:25.585 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.585 ServerApp] 403 GET /api/kernelspecs?1740770905584 (10.63.12.14) 0.38ms referer=None
+[W 2025-02-28 14:28:25.592 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.592 ServerApp] 403 GET /api/kernels?1740770905580 (10.63.12.14) 0.83ms referer=None
+[W 2025-02-28 14:28:25.592 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.592 ServerApp] 403 GET /api/sessions?1740770905580 (10.63.12.14) 0.98ms referer=None
+[W 2025-02-28 14:28:25.592 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.593 ServerApp] 403 GET /api/kernelspecs?1740770905581 (10.63.12.14) 1.13ms referer=None
+[W 2025-02-28 14:28:25.593 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.593 ServerApp] 403 GET /api/kernels?1740770905583 (10.63.12.14) 1.28ms referer=None
+[W 2025-02-28 14:28:25.594 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.594 ServerApp] 403 GET /api/kernels?1740770905584 (10.63.12.14) 0.97ms referer=None
+[W 2025-02-28 14:28:25.594 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.594 ServerApp] 403 GET /api/kernels?1740770905587 (10.63.12.14) 1.10ms referer=None
+[W 2025-02-28 14:28:25.594 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.594 ServerApp] 403 GET /api/sessions?1740770905587 (10.63.12.14) 1.25ms referer=None
+[W 2025-02-28 14:28:25.595 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.595 ServerApp] 403 GET /api/kernels?1740770905588 (10.63.12.14) 1.39ms referer=None
+[W 2025-02-28 14:28:25.595 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.595 ServerApp] 403 GET /api/sessions?1740770905589 (10.63.12.14) 1.55ms referer=None
+[W 2025-02-28 14:28:25.598 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.599 ServerApp] 403 GET /api/kernelspecs?1740770905592 (10.63.12.14) 0.45ms referer=None
+[W 2025-02-28 14:28:25.599 ServerApp] Forbidden
+[W 2025-02-28 14:28:25.599 ServerApp] 403 GET /api/kernelspecs?1740770905593 (10.63.12.14) 0.40ms referer=None

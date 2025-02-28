@@ -26,7 +26,7 @@ class Dataset:
 
     x_col: str
     filename: str
-    y_col: str = "Label"
+    y_col: str = "DELLabel"
     X: np.ndarray = None
     y: np.ndarray = None
 
