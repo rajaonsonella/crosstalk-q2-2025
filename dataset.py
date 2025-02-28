@@ -18,15 +18,13 @@ import pandas as pd
 #     RDK = enum.auto()
 #     AVALON = enum.auto()
 
-
 FINGERPRINT_TYPES = ['ATOMPAIR', 'MACCS', 'ECFP6', 'ECFP4', 'FCFP4', 'FCFP6', 'TOPTOR', 'RDK', 'AVALON']
-
 
 @dataclass
 class Dataset:
     """Basic dataset class holding a dataset."""
 
-    x_col: str | FingerprintEum
+    x_col: str
     filename: str
     y_col: str = "Label"
     X: np.ndarray = None
