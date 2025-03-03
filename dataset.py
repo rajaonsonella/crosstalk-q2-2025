@@ -25,7 +25,7 @@ class Dataset:
             raise ValueError("Invalid fingerprint type")
 
         if self.test:
-           df = pd.read_parquet(self.filename, columns=[self.x_col, self.y_col])
+           df = pd.read_parquet(self.filename, columns=[self.x_col])
            self.y = None 
         else:
             df = pd.read_parquet(self.filename, columns=[self.x_col, self.y_col])
