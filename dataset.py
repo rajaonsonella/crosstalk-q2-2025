@@ -15,6 +15,7 @@ class Dataset:
     x_col: str
     filename: str
     y_col: str = "DELLabel"
+    test: bool = False
     X: np.ndarray = None
     y: np.ndarray = None
 
@@ -23,8 +24,7 @@ class Dataset:
         if self.x_col not in FINGERPRINT_TYPES:
             raise ValueError("Invalid fingerprint type")
 
-        df_info = pd.read_parquet(self.filename, columns=None)
-        if self.y_col not in df_info.columns:
+        if self.test:
            df = pd.read_parquet(self.filename, columns=[self.x_col, self.y_col])
            self.y = None 
         else:
