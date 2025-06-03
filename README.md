@@ -19,6 +19,12 @@ https://datasciences.utoronto.ca/crosstalk-bootcamp/
 
 Click the links below to open the notebooks:
 
+- **Introduction to Python Notebook:**  
+  [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cottascience/crosstalk-q1-2025/blob/main/notebooks/0_CROSSTALK_Python.ipynb)
+
+- **Introduction to ML Notebook:**  
+  [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cottascience/crosstalk-q1-2025/blob/main/notebooks/0.1_CROSSTALK_IntroML.ipynb)
+
 - **Exploratory Data Analysis Notebook:**  
   [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cottascience/crosstalk-q1-2025/blob/main/CROSSTALK_EDA.ipynb)
 
