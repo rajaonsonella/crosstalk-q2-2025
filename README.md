@@ -1,8 +1,14 @@
-# CrossTALK Bootcamp Q1 2025
+# CrossTALK Bootcamp Q2 2025
 
 Cross-Training in AI and Laboratory Knowledge for Drug Discovery
 
 https://datasciences.utoronto.ca/crosstalk-bootcamp/
+
+## Sending predictions for evaluation
+
+Visit our kaggle website:
+
+https://www.kaggle.com/competitions/cross-talk-round-2
 
 ## Getting Started in the notebooks
 
