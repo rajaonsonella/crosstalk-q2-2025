@@ -5,8 +5,23 @@ from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
+import pyarrow as pa
+import pyarrow.compute as pc
+import pyarrow.parquet as pq
+from tqdm.auto import tqdm
 
-FINGERPRINT_TYPES = ['ATOMPAIR', 'MACCS', 'ECFP6', 'ECFP4', 'FCFP4', 'FCFP6', 'TOPTOR', 'RDK', 'AVALON']
+FINGERPRINT_TYPES = [
+    "ATOMPAIR",
+    "MACCS",
+    "ECFP6",
+    "ECFP4",
+    "FCFP4",
+    "FCFP6",
+    "TOPTOR",
+    "RDK",
+    "AVALON",
+]
+
 
 @dataclass
 class Dataset:
@@ -20,13 +35,13 @@ class Dataset:
     y: np.ndarray = None
 
     def __post_init__(self):
-        
+
         if self.x_col not in FINGERPRINT_TYPES:
             raise ValueError("Invalid fingerprint type")
 
         if self.test:
-           df = pd.read_parquet(self.filename, columns=[self.x_col])
-           self.y = None 
+            df = pd.read_parquet(self.filename, columns=[self.x_col])
+            self.y = None
         else:
             df = pd.read_parquet(self.filename, columns=[self.x_col, self.y_col])
             self.y = df[self.y_col].values
@@ -45,3 +60,87 @@ class Dataset:
             print(f"Warning: Found {len(invalid_rows)} invalid rows in dataset")
 
         del df
+
+
+def calculate_np_memory(shape, dtype=np.float32):
+    """
+    Calculates the memory in GB for the data buffer of a NumPy array
+    given its shape and dtype.
+    """
+    num_elements = np.prod(shape)
+    item_size = np.dtype(dtype).itemsize
+    memory_in_bytes = num_elements * item_size
+    return memory_in_bytes / (1024**3)
+
+
+def calculate_feature_dims(features, dims):
+    """
+    Calculates the start and end indices for each feature in a stacked array.
+    """
+    stacked_map = {}
+    offset = 0
+    for c, dim in zip(features, dims):
+        start_index = offset
+        end_index = offset + dim
+        stacked_map[c] = (start_index, end_index)
+        offset += dim
+    return stacked_map
+
+
+def get_feature_dims(parquet_file, features: list[str]) -> list[int]:
+    """Return the dimensions of the features."""
+    first_row = next(parquet_file.iter_batches(batch_size=1)).to_pandas().iloc[0]
+    dims = []
+    for c in features:
+        dims.append(len(np.array(first_row[c].split(","), dtype=np.float32)))
+    return dims
+
+
+def parse_pyarrow_string_array(str_arr):
+    """
+    Parses a PyArrow StringArray into a 2D NumPy array."""
+    list_str_arr = pc.split_pattern(str_arr, pattern=",")
+    flat_str_values = list_str_arr.values
+    flat_float_values = pc.cast(flat_str_values, pa.float32(), safe=False)
+    list_float_arr = pa.ListArray.from_arrays(list_str_arr.offsets, flat_float_values)
+    arr = list_float_arr.to_numpy(zero_copy_only=False)
+    # n_rows = len(list_float_arr)
+    # dim = len(flat_float_values) // n_rows
+    return np.vstack(arr)
+
+
+def load_y(filename: str, y_col: str = "DELLabel", batch_size=1000) -> np.ndarray:
+    """Loads label features from a Parquet file."""
+    parquet_file = pq.ParquetFile(filename)
+    pq_iter = parquet_file.iter_batches(batch_size=batch_size)
+    values = []
+    for record_batch in pq_iter:
+        values.append(record_batch.column(y_col).to_numpy(np.float32))
+    return np.hstack(values).reshape(-1, 1)
+
+
+def load_x(
+    filename: str, x_cols: list[str], y_col: str = "DELLabel", batch_size=1000
+) -> np.ndarray:
+    """Loads input features from a Parquet file."""
+    parquet_file = pq.ParquetFile(filename)
+    n_rows = parquet_file.metadata.num_rows
+    print(f"Total rows: {n_rows}")
+    feat_dims = get_feature_dims(parquet_file, x_cols)
+    n_dim = sum(feat_dims)
+    chunk_size = 1000
+    n_chunks = n_rows // chunk_size
+    print(f"Expected Memory for inputs: {calculate_np_memory((n_rows, n_dim)):.2f} GBs")
+    feature_dims = calculate_feature_dims(x_cols, feat_dims)
+    pq_iter = parquet_file.iter_batches(batch_size=chunk_size, columns=None)
+    x = np.zeros((n_rows, n_dim), dtype=np.float32)
+    for i, record_batch in tqdm(enumerate(pq_iter), total=n_chunks):
+        x_start = i * chunk_size
+        x_end = min((i + 1) * chunk_size, n_rows)
+        x_slice = slice(x_start, x_end)
+        for c in x_cols:
+            f_slice = slice(*feature_dims[c])
+            chunked_arr = record_batch.column(c)
+            values = parse_pyarrow_string_array(chunked_arr)
+            x[x_slice, f_slice] = values
+    return x
