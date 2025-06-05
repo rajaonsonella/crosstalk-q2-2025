@@ -2,6 +2,8 @@
 Tools for evaluating molecule selection models, binary/ranking.
 """
 
+import functools
+
 import numpy as np
 import pandas as pd
 import sklearn.base
@@ -10,8 +12,10 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
+    auc,
     balanced_accuracy_score,
     make_scorer,
+    precision_recall_curve,
     precision_score,
     recall_score,
     roc_auc_score,
@@ -21,6 +25,116 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 RANDOM_STATE = 42
+KS = [5, 10, 30]
+
+
+def hits_at_k(y_true, y_scores, k):
+    # Expects y_scores (raw probabilities/scores)
+    if k <= 0:
+        raise ValueError("k must be positive.")
+
+    y_true_arr = np.asarray(y_true)
+    y_scores_arr = np.asarray(y_scores)
+
+    positive_sample_indices = np.where(y_true_arr == 1)[0]
+    if len(positive_sample_indices) == 0:
+        return 0.0
+
+    hits = 0
+    for i in positive_sample_indices:
+        score_of_positive_sample = y_scores_arr[i]
+        # Rank: 1 + number of items with score > score_of_positive_sample
+        rank = np.sum(y_scores_arr > score_of_positive_sample) + 1
+        if rank <= k:
+            hits += 1
+
+    return hits / len(positive_sample_indices)
+
+
+def precision_at_k(y_true, y_scores, k):
+    # Expects y_scores (raw probabilities/scores)
+    if k <= 0:
+        raise ValueError("k must be positive.")
+
+    y_true_arr = np.asarray(y_true)
+    y_scores_arr = np.asarray(y_scores)
+
+    num_samples = len(y_true_arr)
+    actual_k = min(k, num_samples)  # Cap k at the number of samples
+    if actual_k == 0:
+        return 0.0
+
+    # Indices of top-k highest scores
+    top_k_indices = np.argsort(y_scores_arr)[-actual_k:]
+
+    true_positives_in_top_k = np.sum(y_true_arr[top_k_indices] == 1)
+    return true_positives_in_top_k / actual_k
+
+
+def mrr(y_true, y_scores):  # Mean Reciprocal Rank
+    # Expects y_scores (raw probabilities/scores)
+    y_true_arr = np.asarray(y_true)
+    y_scores_arr = np.asarray(y_scores)
+
+    positive_sample_indices = np.where(y_true_arr == 1)[0]
+    if len(positive_sample_indices) == 0:
+        return 0.0
+
+    reciprocal_ranks = []
+    for i in positive_sample_indices:
+        score_of_positive_sample = y_scores_arr[i]
+        # Rank: 1 + number of items with score > score_of_positive_sample
+        rank = np.sum(y_scores_arr > score_of_positive_sample) + 1
+        reciprocal_ranks.append(1.0 / rank)
+
+    if not reciprocal_ranks:  # Should only happen if positive_sample_indices was empty
+        return 0.0
+    return np.mean(reciprocal_ranks)
+
+
+def auprc(y_true, y_scores):  # Area Under Precision-Recall Curve
+    # Expects y_scores (raw probabilities/scores)
+    y_true_arr = np.asarray(y_true)
+    y_scores_arr = np.asarray(y_scores)
+
+    # AUPRC is typically not well-defined or is 0 if there are no positive samples.
+    # sklearn's precision_recall_curve handles cases with one class gracefully.
+    # If only negatives, precision is 0, recall is 0. AUC will be 0.
+    # If only positives, precision is 1, recall is 1. AUC will be 1. (This case is less common for PR curve utility)
+    if np.sum(y_true_arr == 1) == 0:  # No positive samples
+        return 0.0  # Or np.nan, depending on preference. 0.0 is common.
+    if len(np.unique(y_true_arr)) < 2 and np.all(
+        y_true_arr == 1
+    ):  # All positive samples
+        return 1.0  # Or np.nan
+
+    precision_points, recall_points, _ = precision_recall_curve(
+        y_true_arr, y_scores_arr
+    )
+    # The AUC function expects recall (x-axis) then precision (y-axis)
+    return auc(recall_points, precision_points)
+
+
+metrics_dict = {
+    "accuracy": accuracy_score,
+    "balanced_accuracy": balanced_accuracy_score,
+    "AUROC": roc_auc_score,
+    "AUPRC": auprc,
+    "precision": precision_score,
+    "recall": recall_score,
+    "mean_reciprocal_rank": mrr,
+}
+for k in KS:
+    metrics_dict[f"hits_at_{k}"] = functools.partial(hits_at_k, k=k)
+    metrics_dict[f"precision_at_{k}"] = functools.partial(precision_at_k, k=k)
+
+
+def evaluate_predictions(y_true, y_pred) -> dict[str, float]:
+    """Evaluate predictions using various metrics."""
+    results = {}
+    for metric_name, metric_fn in metrics_dict.items():
+        results[metric_name] = metric_fn(y_true, y_pred)
+    return results
 
 
 def bootstrap_estimates(y_true, y_pred, metric_fn, n_iterations=1000, **metric_kwargs):
