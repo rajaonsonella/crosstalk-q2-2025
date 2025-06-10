@@ -128,11 +128,10 @@ def load_x(
     print(f"Total rows: {n_rows}")
     feat_dims = get_feature_dims(parquet_file, x_cols)
     n_dim = sum(feat_dims)
-    chunk_size = 1000
     n_chunks = n_rows // chunk_size
     print(f"Expected Memory for inputs: {calculate_np_memory((n_rows, n_dim)):.2f} GBs")
     feature_dims = calculate_feature_dims(x_cols, feat_dims)
-    pq_iter = parquet_file.iter_batches(batch_size=chunk_size, columns=None)
+    pq_iter = parquet_file.iter_batches(batch_size=batch_size, columns=None)
     x = np.zeros((n_rows, n_dim), dtype=np.float32)
     for i, record_batch in tqdm(enumerate(pq_iter), total=n_chunks):
         x_start = i * chunk_size
