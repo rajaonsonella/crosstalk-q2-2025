@@ -22,6 +22,43 @@ FINGERPRINT_TYPES = [
     "AVALON",
 ]
 
+def basic_dataloader(filepath, x_col, y_col = None, n_to_load = None):
+  pf = pa.parquet.ParquetFile(filepath)
+  # load y
+  if y_col is not None:
+    y = pf.read(columns = ['DELLabel']).to_pandas()
+    y = y.iloc[0:n_to_load][y_col].values
+  else: y = None
+
+  # load X
+  if n_to_load is not None:
+    rows_to_load = next(pf.iter_batches(columns = [x_col, y_col], batch_size = n_to_load))
+    df = pa.Table.from_batches([rows_to_load]).to_pandas()
+  else:
+    df = pf.read(columns = [x_col]).to_pandas()
+
+  # split X strings
+  X = df[x_col].str.split(',', expand=True).astype(int, copy=False).values
+
+  return X, y
+
+
+def parquet_dataloader(filename, x_col, y_col=None, batch_size=1000):
+    pf = pa.parquet.ParquetFile(filename)
+    columns = [x_col] + ([y_col] if y_col is not None else [])
+    for batch in pf.iter_batches(columns=columns, batch_size=batch_size):
+        df = pa.Table.from_batches([batch]).to_pandas()
+        # Use string splitting for X, as in basic_dataloader
+        X = df[x_col].str.split(',', expand=True).astype(float, copy=False).values
+        if y_col is not None:
+            y = df[y_col].values
+        else:
+            y = None
+        yield X, y
+
+    
+
+
 
 @dataclass
 class Dataset:
