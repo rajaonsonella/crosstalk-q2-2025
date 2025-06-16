@@ -47,8 +47,10 @@ def basic_dataloader(filepath, x_col, y_col = None, n_to_load = 100):
 
     # split X strings
     X = df[x_col].str.split(',', expand=True).astype(float, copy=False).values
-    y = df[y_col].values if y_col is not None else None
-
+    
+    if y_col is None:
+       return X
+    
     return X, y
 
 def parquet_split_dataloader(filename, x_col, y_col=None, batch_size=1000, test_size=0.2, random_state=42, max_batches=None):
