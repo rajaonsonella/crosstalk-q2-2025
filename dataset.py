@@ -23,40 +23,62 @@ FINGERPRINT_TYPES = [
 ]
 
 def basic_dataloader(filepath, x_col, y_col = None, n_to_load = None):
-  pf = pa.parquet.ParquetFile(filepath)
-  # load y
-  if y_col is not None:
-    y = pf.read(columns = ['DELLabel']).to_pandas()
-    y = y.iloc[0:n_to_load][y_col].values
-  else: y = None
+    """
+    Loads data from a Parquet file into memory, optionally loading a subset of rows.
 
-  # load X
-  if n_to_load is not None:
-    rows_to_load = next(pf.iter_batches(columns = [x_col, y_col], batch_size = n_to_load))
-    df = pa.Table.from_batches([rows_to_load]).to_pandas()
-  else:
-    df = pf.read(columns = [x_col]).to_pandas()
+    Args:
+        filepath (str): Path to the Parquet file.
+        x_col (str): Name of the feature column.
+        y_col (str, optional): Name of the label column. If None, only features are loaded. Defaults to None.
+        n_to_load (int, optional): Number of rows to load. If None, loads all rows. Defaults to None.
 
-  # split X strings
-  X = df[x_col].str.split(',', expand=True).astype(int, copy=False).values
+    Returns:
+        X (np.ndarray): Feature matrix of shape (n_samples, n_features).
+        y (np.ndarray or None): Label array of shape (n_samples,) if y_col is provided, else None.
+    """
+    pf = pa.parquet.ParquetFile(filepath)
+    columns = [x_col] + ([y_col] if y_col is not None else [])
+    # load top n
+    if n_to_load is not None:
+      rows_to_load = next(pf.iter_batches(columns = columns, batch_size = n_to_load))
+      df = pa.Table.from_batches([rows_to_load]).to_pandas()
+    else:
+      df = pf.read(columns = columns).to_pandas()
 
-  return X, y
+    # split X strings
+    X = df[x_col].str.split(',', expand=True).astype(float, copy=False).values
+    y = df[y_col].values if y_col is not None else None
 
+    return X, y
+def parquet_split_dataloader(filename, x_col, y_col=None, batch_size=1000, test_size=0.2, random_state=42, max_batches=None):
+    """
+    Loads data from a Parquet file in batches, splits each batch into train/test using sklearn's train_test_split,
+    and optionally collects all test data. Allows stopping after a specified number of batches.
 
-def parquet_dataloader(filename, x_col, y_col=None, batch_size=1000):
+    Args:
+        filename (str): Path to the Parquet file.
+        x_col (str): Name of the feature column.
+        y_col (str, optional): Name of the label column. Defaults to None.
+        batch_size (int, optional): Number of rows per batch. Defaults to 1000.
+        test_size (float, optional): Proportion of test data. Defaults to 0.2.
+        random_state (int, optional): Random seed. Defaults to 42.
+        max_batches (int, optional): Maximum number of batches to process. Defaults to None (all batches).
+    Yields:
+        (X_train, y_train), (X_test, y_test): Train and test splits for each batch.
+    """
     pf = pa.parquet.ParquetFile(filename)
     columns = [x_col] + ([y_col] if y_col is not None else [])
-    for batch in pf.iter_batches(columns=columns, batch_size=batch_size):
+    batch_iter = pf.iter_batches(columns=columns, batch_size=batch_size)
+    test_X_list, test_y_list = [], []
+    for i, batch in enumerate(batch_iter):
+        if max_batches is not None and i >= max_batches:
+            break
         df = pa.Table.from_batches([batch]).to_pandas()
-        # Use string splitting for X, as in basic_dataloader
         X = df[x_col].str.split(',', expand=True).astype(float, copy=False).values
-        if y_col is not None:
-            y = df[y_col].values
-        else:
-            y = None
-        yield X, y
+        y = df[y_col].values if y_col is not None else None
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+        yield (X_train, y_train), (X_test, y_test)
 
-    
 
 
 
