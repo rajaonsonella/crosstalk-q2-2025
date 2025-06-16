@@ -9,6 +9,9 @@ import pyarrow as pa
 import pyarrow.compute as pc
 import pyarrow.parquet as pq
 from tqdm.auto import tqdm
+from sklearn.model_selection import train_test_split
+import scipy
+
 
 FINGERPRINT_TYPES = [
     "ATOMPAIR",
@@ -22,38 +25,62 @@ FINGERPRINT_TYPES = [
     "AVALON",
 ]
 
-def basic_dataloader(filepath, x_col, y_col = None, n_to_load = 100):
+def basic_dataloader(
+    filepath, x_col, y_col='DELLabel', max_to_load=1000, chunk_size=5000
+):
     """
-    Loads data from a Parquet file into memory, optionally loading a subset of rows.
+    Loads data from a Parquet file into memory, optionally as a sparse matrix.
 
     Args:
-        filepath (str): Path to the Parquet file.
-        x_col (str): Name of the feature column.
-        y_col (str, optional): Name of the label column. If None, only features are loaded. Defaults to None.
-        n_to_load (int, optional): Number of rows to load. If None, loads all rows. Defaults to None.
+        filepath (str): Path to the Parquet file. This is the location of your data file on disk.
+        x_col (str): Name of the feature column. This column should contain your input features as comma-separated strings.
+        y_col (str, optional): Name of the label column. If None, only features are loaded. Defaults to 'DELLabel'. This column contains the target values (labels) for supervised learning.
+        max_to_load (int, optional): Number of rows to load. If None, loads all rows. Defaults to 1000. Use this to work with a smaller sample of your data.
+        chunk_size (int, optional): Number of rows to read at a time from disk. Defaults to 1000. This controls memory usage when loading large files.
+        sparse (bool, optional): If True, returns a scipy sparse matrix for X. Defaults to False.
 
     Returns:
-        X (np.ndarray): Feature matrix of shape (n_samples, n_features).
-        y (np.ndarray or None): Label array of shape (n_samples,) if y_col is provided, else None.
+        X (np.ndarray or scipy.sparse.csr_matrix): Feature matrix.
+        y (np.ndarray or None): Label array if y_col is provided, else None.
     """
-    pf = pa.parquet.ParquetFile(filepath)
+
+    pf = pq.ParquetFile(filepath)
     columns = [x_col] + ([y_col] if y_col is not None else [])
-    # load top n
-    if n_to_load is not None:
-      rows_to_load = next(pf.iter_batches(columns = columns, batch_size = n_to_load))
-      df = pa.Table.from_batches([rows_to_load]).to_pandas()
+    if max_to_load is None:
+        max_to_load = pf.metadata.num_rows
+    mats = []
+    y_list = []
+    loaded = 0
+
+    n_chunks = int(np.ceil(max_to_load / chunk_size))
+    pbar = tqdm(total=n_chunks, desc='Loading chunks')
+    for batch in pf.iter_batches(columns=columns, batch_size=min(chunk_size, max_to_load)):
+        batch_df = pa.Table.from_batches([batch]).to_pandas()
+        remaining = max_to_load - loaded
+        if len(batch_df) > remaining:
+            batch_df = batch_df.iloc[:remaining]
+        # Convert feature column to matrix
+        exploded = batch_df[x_col].str.split(',', expand=True).astype(float, copy=False)
+        mats.append(scipy.sparse.csr_matrix(exploded))
+        if y_col is not None:
+            y_list.append(batch_df[y_col].values)
+        loaded += len(batch_df)
+        del batch_df, exploded
+        pbar.update(1)
+        if loaded >= max_to_load:
+            break
+    pbar.n = pbar.total  # force bar to 100%
+    pbar.refresh()
+    pbar.close()
+
+    X = scipy.sparse.vstack(mats)
+    if y_col is not None and y_list:
+        y = np.concatenate(y_list)
+        return X, y
     else:
-      df = pf.read(columns = columns).to_pandas()
+        return X
 
-    # split X strings
-    X = df[x_col].str.split(',', expand=True).astype(float, copy=False).values
-    
-    if y_col is None:
-       return X
-    
-    return X, y
-
-def parquet_split_dataloader(filename, x_col, y_col=None, batch_size=1000, test_size=0.2, random_state=42, max_batches=None):
+def parquet_split_dataloader(filename, x_col, y_col=None, chunk_size=10000, test_size=0.2, random_state=42, max_batches=None, max_to_load=None):
     """
     Loads data from a Parquet file in batches, splits each batch into train/test using sklearn's train_test_split,
     and optionally collects all test data. Allows stopping after a specified number of batches.
@@ -71,7 +98,7 @@ def parquet_split_dataloader(filename, x_col, y_col=None, batch_size=1000, test_
     """
     pf = pa.parquet.ParquetFile(filename)
     columns = [x_col] + ([y_col] if y_col is not None else [])
-    batch_iter = pf.iter_batches(columns=columns, batch_size=batch_size)
+    batch_iter = pf.iter_batches(columns=columns, batch_size=chunk_size)
     test_X_list, test_y_list = [], []
     for i, batch in enumerate(batch_iter):
         if max_batches is not None and i >= max_batches:
