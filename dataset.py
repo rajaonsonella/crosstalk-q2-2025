@@ -22,7 +22,7 @@ FINGERPRINT_TYPES = [
     "AVALON",
 ]
 
-def basic_dataloader(filepath, x_col, y_col = None, n_to_load = None):
+def basic_dataloader(filepath, x_col, y_col = None, n_to_load = 100):
     """
     Loads data from a Parquet file into memory, optionally loading a subset of rows.
 
@@ -50,6 +50,7 @@ def basic_dataloader(filepath, x_col, y_col = None, n_to_load = None):
     y = df[y_col].values if y_col is not None else None
 
     return X, y
+
 def parquet_split_dataloader(filename, x_col, y_col=None, batch_size=1000, test_size=0.2, random_state=42, max_batches=None):
     """
     Loads data from a Parquet file in batches, splits each batch into train/test using sklearn's train_test_split,
