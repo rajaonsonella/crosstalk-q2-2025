@@ -1,4 +1,4 @@
-# CrossTALK Bootcamp Q1 2025
+# CrossTALK Bootcamp Q2 2025
 
 Cross-Training in AI and Laboratory Knowledge for Drug Discovery
 
