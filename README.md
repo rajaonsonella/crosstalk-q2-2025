@@ -4,6 +4,10 @@ Cross-Training in AI and Laboratory Knowledge for Drug Discovery
 
 https://datasciences.utoronto.ca/crosstalk-bootcamp/
 
+## Kaggle
+
+https://www.kaggle.com/competitions/cross-talk-round-2
+
 ## Getting Started in the notebooks
 
 <div style="background-color: #f0f4f8; border-left: 5px solid #2962ff; padding: 15px; margin: 20px 0;">
